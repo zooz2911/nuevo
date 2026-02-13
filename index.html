@@ -962,9 +962,10 @@
       const audioText = document.getElementById('audioText');
       let musicPlaying = false;
 
-      // Función para iniciar música (se llama al encender)
+      // Función para iniciar música (se llama al encender) - ahora desde segundo 18
       function startMusic() {
         if (!musicPlaying) {
+          bgMusic.currentTime = 18; // Salta los primeros 18 segundos
           bgMusic.play().then(() => {
             musicPlaying = true;
             audioIcon.className = 'fas fa-music';
@@ -978,6 +979,8 @@
       // Control de silencio
       audioControl.addEventListener('click', function() {
         if (bgMusic.paused) {
+          // Al reanudar, también empezamos desde 18 para mantener consistencia
+          bgMusic.currentTime = 18;
           bgMusic.play();
           audioIcon.className = 'fas fa-music';
           audioText.innerText = 'Sonido';
@@ -1340,11 +1343,12 @@
       }
       messageScroll.addEventListener('scroll', checkScrollEnd);
 
-      // --- Confeti de palabras ---
+      // ===== CONFETI DE PALABRAS (mejorado con duración de 1 minuto y reinicio) =====
       const confettiCtx = confettiCanvas.getContext('2d');
       let particles = [];
       let confettiActive = false;
       let confettiFrame;
+      let confettiTimeout; // Para controlar el temporizador
 
       function initConfettiCanvas() {
         confettiCanvas.width = window.innerWidth;
@@ -1404,25 +1408,33 @@
         }
       }
 
-      function startRainConfetti() {
-        if (confettiActive) cancelAnimationFrame(confettiFrame);
+      // Función mejorada: recibe duración en milisegundos (por defecto 60000 = 1 minuto)
+      function startRainConfetti(duracion = 60000) {
+        // Cancelar cualquier confeti anterior
+        if (confettiActive) {
+          confettiActive = false;
+          cancelAnimationFrame(confettiFrame);
+          clearTimeout(confettiTimeout);
+        }
+        // Iniciar nuevo
         initConfettiCanvas();
         createRainParticles();
         confettiActive = true;
         confettiCanvas.style.display = 'block';
         drawRain();
-        setTimeout(() => {
+        // Detener después de la duración especificada
+        confettiTimeout = setTimeout(() => {
           confettiActive = false;
           confettiCanvas.style.display = 'none';
           cancelAnimationFrame(confettiFrame);
-        }, 10000);
+        }, duracion);
       }
 
-      // --- Cerrar carta con lluvia de palabras ---
+      // --- Cerrar carta con lluvia de palabras (1 minuto) ---
       function closeCardWithRain(e) {
         e.stopPropagation();
         if (!isOpened) return;
-        startRainConfetti();
+        startRainConfetti(60000); // 1 minuto
         isOpened = false;
         card.classList.remove('flipped');
         step1.style.display = 'flex';
@@ -1440,7 +1452,10 @@
         h = window.innerHeight;
         heartCanvas.width = w;
         heartCanvas.height = h;
-        if (confettiActive) initConfettiCanvas();
+        if (confettiActive) {
+          // Si hay confeti activo, redimensionar y mantener partículas (opcional)
+          // Podríamos reiniciar, pero para simplificar, no hacemos nada
+        }
         if (galaxyActive) {
           initGalaxy();
         }
