@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>San Valentín · Perfect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ===== RESET Y MEJORAS RESPONSIVE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #1a0005;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      font-family: 'Dancing Script', cursive;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== INTRO: LÁMPARAS COLGANTES + GALAXIA ÉPICA ===== */
+    .intro-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0a0003;
+      z-index: 400;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      transition: opacity 1.2s ease, visibility 1.2s;
+      padding: 20px 20px 30px;
+    }
+
+    .intro-container.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Lámparas superiores - responsive */
+    .lamps-top {
+      display: flex;
+      justify-content: center;
+      gap: 15vw;
+      width: 100%;
+      padding-top: 20px;
+      z-index: 10;
+      flex-wrap: wrap;
+    }
+
+    .lamp {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
+    }
+
+    .lamp-wire {
+      width: 4px;
+      height: 60px;
+      background: #5a4a4a;
+      border-radius: 2px;
+      margin-bottom: -5px;
+    }
+
+    .lamp-shade {
+      width: 60px;
+      height: 40px;
+      background: #6b5a5a;
+      background: radial-gradient(circle at 30% 30%, #8a7a7a, #4a3a3a);
+      border-radius: 50% 50% 30% 30%;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.7), inset 0 -5px 10px rgba(0,0,0,0.5);
+      border-bottom: 3px solid #3a2a2a;
+      transition: background 0.4s, box-shadow 0.4s, border-color 0.4s;
+    }
+
+    .lamp.lit .lamp-shade {
+      background: radial-gradient(circle at 30% 30%, #fff3b0, #ffb347);
+      border-bottom: 3px solid #ffffc0;
+      box-shadow: 0 0 50px #ffb86b, 0 0 100px #ff8c42, inset 0 -5px 15px #ffffaa;
+    }
+
+    .lamp.lit .lamp-wire {
+      background: #b39e8a;
+      box-shadow: 0 0 15px #ffb56b;
+    }
+
+    /* Título responsive con efecto galaxia */
+    .valentine-title {
+      font-size: 3.5rem;
+      color: #fff5f0;
+      text-align: center;
+      line-height: 1.2;
+      margin: 10px 0;
+      opacity: 0;
+      transition: opacity 1s ease, text-shadow 0.5s;
+      text-shadow: 0 0 40px #ff7b9c, 0 0 100px #ffb3c6, 0 0 150px #ff4d6d;
+      background: linear-gradient(145deg, #ffd9e6, #ffb3c6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      z-index: 15;
+      pointer-events: none;
+      filter: drop-shadow(0 0 60px #ff3b6f);
+    }
+
+    @media (min-width: 600px) {
+      .valentine-title { font-size: 4.5rem; }
+      .lamp-shade { width: 70px; height: 45px; }
+      .lamp-wire { height: 70px; }
+    }
+
+    .valentine-title.show {
+      opacity: 1;
+    }
+
+    /* Interruptor mejorado para móvil */
+    .switch-wrapper {
+      z-index: 20;
+      background: rgba(10, 5, 5, 0.5);
+      backdrop-filter: blur(8px);
+      padding: 15px 25px;
+      border-radius: 80px;
+      border: 2px solid rgba(255, 200, 180, 0.6);
+      box-shadow: 0 0 40px rgba(255, 140, 100, 0.3);
+      margin-bottom: 20px;
+      display: inline-block;
+    }
+
+    .switch-btn {
+      background: #2c1c14;
+      border: 3px solid #c08a6b;
+      color: #ffe4cc;
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.2rem;
+      font-weight: 700;
+      padding: 12px 40px;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s, border-color 0.2s;
+      letter-spacing: 5px;
+      text-shadow: 0 0 15px #ffbd7f;
+      box-shadow: 0 6px 0 #4f2e1e, 0 15px 30px black;
+      min-width: 200px;
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    .switch-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 #4f2e1e, 0 15px 30px black;
+    }
+
+    .switch-btn.disabled {
+      opacity: 0.6;
+      pointer-events: none;
+      filter: grayscale(0.5);
+    }
+
+    /* Canvas para galaxia (mejorado con más partículas y brillo) */
+    #galaxyCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0.9;
+      transition: opacity 0.5s, filter 0.5s;
+    }
+
+    #galaxyCanvas.bright {
+      opacity: 1;
+      filter: drop-shadow(0 0 40px #ffa0c0) brightness(1.3);
+    }
+
+    /* ===== ACCESO: CALCULADORA DE FECHA (16/08/2025) ===== */
+    .date-access-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at 30% 30%, #1a0005, black 90%);
+      z-index: 200;
+      transition: opacity 0.8s ease, visibility 0.8s;
+      backdrop-filter: blur(4px);
+      padding: 12px;
+    }
+
+    .date-access-container.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .date-card {
+      width: 100%;
+      max-width: 380px;
+      background: rgba(20, 5, 10, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 170, 190, 0.3);
+      border-radius: 40px;
+      padding: 1.8rem 1.2rem;
+      box-shadow: 0 25px 40px -10px black;
+      text-align: center;
+      color: #ffe4ec;
+    }
+
+    .date-card i.fa-heart {
+      font-size: 2.5rem;
+      color: #ffa5b9;
+      text-shadow: 0 0 25px #ff3b6f;
+    }
+
+    .date-card h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(145deg, #ffddee, #ffb6c1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .date-display {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      margin: 20px 0 15px;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #ffc0d0;
+    }
+
+    .date-display span {
+      background: rgba(40, 10, 18, 0.7);
+      border: 1.5px solid rgba(255, 200, 210, 0.5);
+      border-radius: 15px;
+      padding: 0.4rem 0.6rem;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .date-display .separator {
+      background: transparent;
+      border: none;
+      font-size: 2.2rem;
+      padding: 0;
+      min-width: auto;
+    }
+
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 15px 0;
+    }
+
+    .key {
+      background: rgba(50, 20, 30, 0.7);
+      border: 2px solid rgba(255, 140, 160, 0.5);
+      border-radius: 30px;
+      padding: 1rem 0.2rem;
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #ffd0dd;
+      cursor: pointer;
+      transition: background 0.1s, transform 0.1s, box-shadow 0.1s;
+      box-shadow: 0 6px 0 #3a1a24, 0 6px 12px black;
+      font-family: 'Dancing Script', cursive;
+    }
+
+    .key:active {
+      transform: translateY(5px);
+      box-shadow: 0 1px 0 #3a1a24, 0 6px 12px black;
+      background: rgba(80, 30, 40, 0.9);
+    }
+
+    .key.clear {
+      background: #5a2a38;
+      border-color: #ffa0b0;
+    }
+
+    .key.enter {
+      background: #8a3a4a;
+      border-color: #ffb0c0;
+      grid-column: span 2;
+    }
+
+    .love-message {
+      font-size: 2rem;
+      color: #ffb0c0;
+      min-height: 2.8rem;
+      margin-top: 10px;
+      text-shadow: 0 0 20px #ff3b6f;
+    }
+
+    .error-feedback {
+      color: #ffa0a0;
+      font-size: 1.2rem;
+      margin-top: 5px;
+    }
+
+    /* ===== CANVAS CORAZONES (post-login) ===== */
+    #heartCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      will-change: opacity;
+    }
+
+    /* ===== CANVAS CONFETI ===== */
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 300;
+      display: none;
+    }
+
+    /* ===== SOBRE / CARTA (responsive) ===== */
+    .envelope-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 30;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s cubic-bezier(0.23, 1, 0.32, 1);
+      width: 90%;
+      max-width: 380px;
+      height: auto;
+      aspect-ratio: 380/360;
+      perspective: 1400px;
+    }
+
+    .envelope-wrapper.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .card-3d {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateY(0deg);
+      transition: transform 0.8s cubic-bezier(0.34, 1.2, 0.55, 1);
+      box-shadow: 0 30px 45px -10px rgba(0,0,0,0.6);
+      border-radius: 24px;
+    }
+
+    .card-3d.flipped { transform: rotateY(180deg); }
+
+    .front, .back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      backface-visibility: hidden;
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .front {
+      background: linear-gradient(145deg, #ffd1d9, #ffb3c1);
+      border: 4px double #fff0f5;
+      position: relative;
+      box-shadow: inset 0 0 40px rgba(255,200,220,0.7), 0 10px 25px rgba(80,0,20,0.3);
+    }
+
+    .front::after {
+      content: '🌹❤️🌹❤️🌹';
+      position: absolute;
+      bottom: 5px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #a1334b;
+      letter-spacing: 4px;
+      opacity: 0.8;
+      text-shadow: 0 0 8px #ff99aa;
+      z-index: 15;
+    }
+
+    .front::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 0;
+      width: 100%;
+      height: 40%;
+      background: linear-gradient(145deg, #ffa5b9, #ff7a9c);
+      clip-path: polygon(0% 0%, 50% 85%, 100% 0%);
+      border-radius: 24px 24px 0 0;
+      opacity: 0.95;
+      z-index: 1;
+      border-bottom: 3px solid rgba(255,220,240,0.8);
+    }
+
+    .front .wax-seal {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 40px;
+      background: #b33b4d;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 3px #ffd9e2, 0 8px 15px rgba(100,0,20,0.5);
+      z-index: 20;
+      font-size: 1.4rem;
+      color: #ffe6f0;
+      border: 1px solid #ffe0e7;
+    }
+
+    .rose-corner {
+      position: absolute;
+      font-size: 1.2rem;
+      color: #c1315a;
+      text-shadow: 0 0 12px #ffa5b9;
+      z-index: 12;
+    }
+    .rose1 { top: 5px; left: 5px; transform: rotate(-15deg); }
+    .rose2 { top: 5px; right: 5px; transform: rotate(15deg); }
+    .rose3 { bottom: 35px; left: 5px; transform: rotate(-25deg); }
+    .rose4 { bottom: 35px; right: 5px; transform: rotate(25deg); }
+
+    .floating-heart {
+      position: absolute;
+      color: rgba(255,80,120,0.6);
+      font-size: 0.8rem;
+      z-index: 8;
+      animation: float 4s infinite alternate;
+    }
+    .fh1 { top: 25px; left: 25px; }
+    .fh2 { top: 50px; right: 20px; font-size: 1rem; }
+    .fh3 { bottom: 50px; left: 15px; font-size: 1rem; }
+    .fh4 { bottom: 60px; right: 25px; }
+    .fh5 { top: 80px; left: 10px; font-size: 0.7rem; }
+    .fh6 { top: 90px; right: 10px; }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-8px); }
+    }
+
+    .front .fa-ribbon {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 2rem;
+      color: #ff4d6d;
+      text-shadow: 0 0 15px #fff0f5, 0 4px 10px rgba(200,0,60,0.5);
+      transform: rotate(20deg);
+      z-index: 15;
+    }
+
+    .front i.fa-heart-big {
+      font-size: 2.8rem;
+      color: #fff9fb;
+      text-shadow: 0 0 20px #ffb3c6, 0 6px 12px rgba(150,0,40,0.4);
+      margin-bottom: 10px;
+      z-index: 12;
+    }
+
+    .front small {
+      font-family: 'Dancing Script', cursive;
+      color: #59001c;
+      background: rgba(255,245,240,0.7);
+      padding: 5px 18px;
+      border-radius: 50px;
+      margin-top: 20px;
+      z-index: 15;
+      position: relative;
+      font-size: 1rem;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(120,0,30,0.3);
+      border: 1px solid white;
+      letter-spacing: 2px;
+    }
+
+    .back {
+      background: #fff9f7;
+      background-image: radial-gradient(circle at 10% 20%, rgba(255,200,210,0.2) 2px, transparent 2px),
+        radial-gradient(circle at 90% 70%, rgba(255,180,190,0.2) 3px, transparent 3px),
+        linear-gradient(to bottom, rgba(255,235,240,0.4), rgba(255,245,240,0.9));
+      transform: rotateY(180deg);
+      padding: 0.8rem;
+      border: 2px solid rgba(255,140,170,0.5);
+      box-shadow: inset 0 0 40px rgba(255,200,210,0.4);
+    }
+
+    .paper-content {
+      width: 100%;
+      height: 100%;
+      background: rgba(255,252,245,0.9);
+      border-radius: 20px;
+      border: 2px solid rgba(255,150,170,0.5);
+      box-shadow: inset 0 0 30px rgba(255,210,220,0.5);
+      padding: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      backdrop-filter: blur(2px);
+    }
+
+    /* carrusel responsive */
+    .carousel-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .carousel-title {
+      font-size: 1.2rem;
+      color: #9e2a4b;
+      background: rgba(255,235,240,0.9);
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(150,50,70,0.1);
+      border: 1px solid rgba(255,200,210,0.8);
+    }
+
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.3rem;
+    }
+
+    .carousel-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 8px;
+      padding: 5px 2px;
+      width: 80%;
+      border-radius: 20px;
+      scrollbar-width: none;
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+
+    .carousel-slide {
+      flex: 0 0 auto;
+      width: 140px;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(255,250,250,0.8);
+      border-radius: 20px;
+      padding: 8px;
+      box-shadow: 0 6px 14px rgba(120,40,60,0.15);
+      border: 1px solid rgba(255,180,190,0.5);
+    }
+
+    .carousel-slide img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 18px;
+      border: 3px solid white;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+    }
+
+    .slide-caption {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #7f2b45;
+      margin-top: 5px;
+      text-align: center;
+      background: rgba(255,235,240,0.8);
+      padding: 3px 10px;
+      border-radius: 30px;
+      width: 100%;
+    }
+
+    .carousel-btn {
+      background: rgba(200,80,100,0.9);
+      border: 2px solid white;
+      color: white;
+      font-size: 1.2rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.1s, background 0.2s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .carousel-btn:active { transform: scale(0.9); background: #ff6f91; }
+
+    .carousel-dots {
+      display: flex;
+      gap: 5px;
+      margin-top: 4px;
+      margin-bottom: 10px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffb6c1;
+      border: 1px solid #a1425c;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .dot.active {
+      background: #ff4d6d;
+      transform: scale(1.3);
+      border-color: white;
+    }
+
+    .btn-leer-mas {
+      background: linear-gradient(145deg, #ff9eb5, #ff7a9c);
+      border: 2px solid white;
+      border-radius: 50px;
+      padding: 0.4rem 1.2rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      font-family: 'Dancing Script', cursive;
+      color: white;
+      text-shadow: 0 2px 8px #a1334b;
+      box-shadow: 0 8px 20px #c44560, 0 0 20px rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin: 5px auto;
+      min-width: 140px;
+      letter-spacing: 1px;
+    }
+    .btn-leer-mas.hidden { display: none; }
+    .btn-leer-mas:active { transform: scale(0.95); }
+
+    .main-message {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+    }
+
+    .message-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.8rem;
+      background: rgba(255,245,240,0.8);
+      border-radius: 20px;
+      margin-bottom: 5px;
+      min-height: 150px;
+      border: 1px dashed rgba(255,120,140,0.6);
+      box-shadow: inset 0 0 20px rgba(255,200,210,0.3);
+    }
+
+    .message-text {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.2rem;
+      color: #590d22;
+      line-height: 1.6;
+      text-align: center;
+      white-space: pre-line;
+      padding: 0.2rem;
+    }
+
+    .btn-cerrar {
+      background: linear-gradient(145deg, #ff4d6d, #d62839);
+      border: 3px solid #fff9fb;
+      border-radius: 60px;
+      padding: 0.4rem 1.2rem;
+      font-size: 1.2rem;
+      font-weight: 800;
+      font-family: 'Dancing Script', cursive;
+      color: white;
+      text-shadow: 0 4px 10px #4a0010;
+      box-shadow: 0 0 30px #ff8cae, 0 0 60px #ff4d6d, 0 15px 25px #5c0016;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.3s;
+      margin: 5px auto;
+      min-width: 180px;
+      letter-spacing: 3px;
+      border: 2px solid rgba(255,255,255,0.9);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .btn-cerrar.visible {
+      opacity: 1;
+      pointer-events: auto;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
+    .card-3d.shine::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(120deg, rgba(255,255,255,0) 20%, rgba(255,250,250,0.96) 50%, rgba(255,255,255,0) 80%);
+      transform: translateX(-100%);
+      animation: shine-sweep 1s cubic-bezier(0.25,0.1,0.25,1) forwards;
+      pointer-events: none;
+      border-radius: 24px;
+      z-index: 100;
+    }
+    @keyframes shine-sweep {
+      0% { transform: translateX(-100%) skewX(-15deg); }
+      100% { transform: translateX(200%) skewX(-15deg); }
+    }
+
+    .signature {
+      position: fixed; bottom: 8px; right: 15px; color: rgba(255,200,220,0.35); font-family: 'Dancing Script'; font-size: 0.8rem; z-index: 500; pointer-events: none;
+    }
+
+    /* ===== CONTROL DE AUDIO ===== */
+    .audio-control {
+      position: fixed;
+      top: 15px;
+      right: 20px;
+      z-index: 1000;
+      background: rgba(20, 5, 10, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 170, 190, 0.5);
+      border-radius: 50px;
+      padding: 8px 15px;
+      color: #ffc0d0;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .audio-control i {
+      font-size: 1.5rem;
+      color: #ffb0c0;
+      text-shadow: 0 0 10px #ff3b6f;
+    }
+
+    .audio-control span {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.1rem;
+    }
+
+    .audio-control.muted i {
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <!-- CONTROL DE AUDIO -->
+  <div class="audio-control" id="audioControl">
+    <i class="fas fa-music" id="audioIcon"></i>
+    <span id="audioText">Sonido</span>
+  </div>
+
+  <!-- AUDIO LOCAL (Perfect - Ed Sheeran) -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="./audio/audio.mp3" type="audio/mpeg">
+    <!-- Si tu archivo tiene otro formato (ogg, wav), añade otra línea <source> con type adecuado -->
+    Tu navegador no soporta audio.
+  </audio>
+
+  <!-- INTRO: LÁMPARAS + GALAXIA -->
+  <div id="introContainer" class="intro-container">
+    <div class="lamps-top">
+      <div class="lamp" id="lampLeft">
+        <div class="lamp-wire"></div>
+        <div class="lamp-shade"></div>
+      </div>
+      <div class="lamp" id="lampRight">
+        <div class="lamp-wire"></div>
+        <div class="lamp-shade"></div>
+      </div>
+    </div>
+
+    <div class="valentine-title" id="valentineTitle">Feliz día de San Valentín</div>
+
+    <div class="switch-wrapper">
+      <button class="switch-btn" id="switchBtn">ON / OFF</button>
+    </div>
+  </div>
+
+  <canvas id="galaxyCanvas"></canvas>
+
+  <!-- ACCESO: CALCULADORA DE FECHA (16/08/2025) -->
+  <div id="dateAccessContainer" class="date-access-container hidden">
+    <div class="date-card">
+      <i class="fas fa-heart"></i>
+      <h2>Fecha especial</h2>
+      <div class="date-display">
+        <span id="displayDay">--</span>
+        <span class="separator">/</span>
+        <span id="displayMonth">--</span>
+        <span class="separator">/</span>
+        <span id="displayYear">----</span>
+      </div>
+      <div class="keyboard" id="keyboard">
+        <!-- generado por js -->
+      </div>
+      <div class="love-message" id="loveMessageAccess"></div>
+      <div class="error-feedback" id="dateError"></div>
+    </div>
+  </div>
+
+  <!-- CANVAS CORAZONES (post-login) -->
+  <canvas id="heartCanvas"></canvas>
+
+  <!-- CANVAS CONFETI -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- SOBRE / CARTA -->
+  <div id="envelopeBox" class="envelope-wrapper">
+    <div class="card-3d" id="valentineCard">
+      <div class="front">
+        <span class="rose-corner rose1">🌹</span>
+        <span class="rose-corner rose2">🌹</span>
+        <span class="rose-corner rose3">🌹</span>
+        <span class="rose-corner rose4">🌹</span>
+        <span class="floating-heart fh1">❤️</span>
+        <span class="floating-heart fh2">❤️</span>
+        <span class="floating-heart fh3">❤️</span>
+        <span class="floating-heart fh4">❤️</span>
+        <span class="floating-heart fh5">✨</span>
+        <span class="floating-heart fh6">✨</span>
+        <i class="fas fa-ribbon"></i>
+        <div class="wax-seal">❤️</div>
+        <i class="fas fa-heart fa-heart-big"></i>
+        <small>haz clic ✦</small>
+      </div>
+      <div class="back">
+        <div class="paper-content" id="paperContent">
+          <div id="step1" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <div class="carousel-section">
+              <div class="carousel-title">💕 quiero vivir estas experiencias contigo 💕</div>
+              <div class="carousel-container">
+                <button class="carousel-btn" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+                <div class="carousel-track" id="carouselTrack"></div>
+                <button class="carousel-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+              </div>
+              <div class="carousel-dots" id="carouselDots"></div>
+              <button class="btn-leer-mas hidden" id="leerMasBtn">💌 Leer más...</button>
+            </div>
+          </div>
+          <div id="step2" style="display: none; flex-direction: column; height: 100%; width: 100%;">
+            <div class="main-message">
+              <div class="message-scroll" id="messageScroll">
+                <div class="message-text" id="loveMessage"></div>
+              </div>
+              <button class="btn-cerrar" id="cerrarCartaBtn">💗 Cerrar carta 💗</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="signature">✦ Silveidis & miniña ✦</div>
+
+  <script>
+    (function() {
+      "use strict";
+
+      // Fecha especial: 16/08/2025
+      const SPECIAL_DAY = 16;
+      const SPECIAL_MONTH = 8;
+      const SPECIAL_YEAR = 2025;
+
+      // Elementos intro
+      const introContainer = document.getElementById('introContainer');
+      const switchBtn = document.getElementById('switchBtn');
+      const lampLeft = document.getElementById('lampLeft');
+      const lampRight = document.getElementById('lampRight');
+      const valentineTitle = document.getElementById('valentineTitle');
+      const galaxyCanvas = document.getElementById('galaxyCanvas');
+      let galaxyCtx = galaxyCanvas.getContext('2d');
+      let galaxyParticles = [];
+      let galaxyAnimation = null;
+      let galaxyActive = true;
+      let galaxyBright = false;
+
+      // Elementos acceso fecha
+      const dateAccessContainer = document.getElementById('dateAccessContainer');
+      const displayDay = document.getElementById('displayDay');
+      const displayMonth = document.getElementById('displayMonth');
+      const displayYear = document.getElementById('displayYear');
+      const loveMessageAccess = document.getElementById('loveMessageAccess');
+      const dateError = document.getElementById('dateError');
+      const keyboardDiv = document.getElementById('keyboard');
+
+      // Variables para la fecha ingresada
+      let dayStr = '', monthStr = '', yearStr = '';
+      let currentField = 'day';
+
+      // Elementos carta
+      const heartCanvas = document.getElementById('heartCanvas');
+      const confettiCanvas = document.getElementById('confettiCanvas');
+      const envelope = document.getElementById('envelopeBox');
+      const card = document.getElementById('valentineCard');
+      const leerMasBtn = document.getElementById('leerMasBtn');
+      const cerrarCartaBtn = document.getElementById('cerrarCartaBtn');
+      const step1 = document.getElementById('step1');
+      const step2 = document.getElementById('step2');
+      const loveMessage = document.getElementById('loveMessage');
+      const messageScroll = document.getElementById('messageScroll');
+
+      loveMessage.innerText = `Niña, te quiero muchísimo. Eres lo mejor que me ha pasado en tanto tiempo y cada momento a tu lado es un regalo. Mi mayor deseo hoy es que sigamos sumando experiencias bonitas y que este sea solo uno de los muchos San Valentines que celebremos juntos. ¡Feliz día, mi amor, te amo!`;
+
+      // Flags carta
+      let isOpened = false;
+      let heartRainActive = false;
+      let animFrame = null;
+
+      // ===== AUDIO =====
+      const bgMusic = document.getElementById('bgMusic');
+      const audioControl = document.getElementById('audioControl');
+      const audioIcon = document.getElementById('audioIcon');
+      const audioText = document.getElementById('audioText');
+      let musicPlaying = false;
+
+      // Función para iniciar música (se llama al encender)
+      function startMusic() {
+        if (!musicPlaying) {
+          bgMusic.play().then(() => {
+            musicPlaying = true;
+            audioIcon.className = 'fas fa-music';
+            audioText.innerText = 'Sonido';
+          }).catch(e => {
+            console.log('Error al reproducir audio:', e);
+          });
+        }
+      }
+
+      // Control de silencio
+      audioControl.addEventListener('click', function() {
+        if (bgMusic.paused) {
+          bgMusic.play();
+          audioIcon.className = 'fas fa-music';
+          audioText.innerText = 'Sonido';
+        } else {
+          bgMusic.pause();
+          audioIcon.className = 'fas fa-volume-mute';
+          audioText.innerText = 'Silenciado';
+        }
+      });
+
+      // Canvas corazones (post-login)
+      let ctx = heartCanvas.getContext('2d');
+      let w, h;
+      let hearts = [];
+
+      function initHeartCanvas() {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        heartCanvas.width = w;
+        heartCanvas.height = h;
+        heartCanvas.style.opacity = '1';
+        heartRainActive = true;
+
+        const heartCount = w < 600 ? 50 : 80;
+        hearts = [];
+        for (let i = 0; i < heartCount; i++) {
+          hearts.push({
+            x: Math.random() * w,
+            y: Math.random() * h - h * 0.2,
+            size: Math.floor(Math.random() * 20) + 12,
+            speed: Math.random() * 2 + 1.2,
+            color: `hsl(${Math.floor(Math.random() * 20 + 340)}, 70%, 65%)`,
+            opacity: Math.random() * 0.5 + 0.4,
+          });
+        }
+        animateHearts();
+      }
+
+      function animateHearts() {
+        if (!heartRainActive) {
+          ctx.clearRect(0, 0, w, h);
+          return;
+        }
+        ctx.clearRect(0, 0, w, h);
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = 'rgba(255,80,120,0.5)';
+        for (let hrt of hearts) {
+          hrt.y += hrt.speed;
+          if (hrt.y > h + 50) {
+            hrt.y = -50;
+            hrt.x = Math.random() * w;
+            hrt.speed = Math.random() * 2 + 1.2;
+          }
+          ctx.font = `${hrt.size}px "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", "Arial", sans-serif`;
+          ctx.fillStyle = hrt.color;
+          ctx.globalAlpha = hrt.opacity;
+          ctx.fillText('❤️', hrt.x, hrt.y);
+        }
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1;
+        animFrame = requestAnimationFrame(animateHearts);
+      }
+
+      // ===== GALAXIA MEJORADA =====
+      function initGalaxy() {
+        galaxyCanvas.width = window.innerWidth;
+        galaxyCanvas.height = window.innerHeight;
+        const count = 700; // Muchas partículas
+        galaxyParticles = [];
+        for (let i = 0; i < count; i++) {
+          galaxyParticles.push({
+            x: Math.random() * galaxyCanvas.width,
+            y: Math.random() * galaxyCanvas.height,
+            size: Math.floor(Math.random() * 14) + 3, // 3-17px
+            speedX: (Math.random() - 0.5) * 0.15,
+            speedY: (Math.random() - 0.5) * 0.1,
+            color: `hsl(${Math.floor(Math.random() * 50 + 300)}, 85%, 65%)`,
+            baseOpacity: Math.random() * 0.6 + 0.3,
+            phase: Math.random() * 2 * Math.PI,
+            type: Math.random() > 0.25 ? 'heart' : 'star', // 75% corazones
+          });
+        }
+      }
+
+      function drawGalaxy() {
+        if (!galaxyActive) return;
+        galaxyCtx.clearRect(0, 0, galaxyCanvas.width, galaxyCanvas.height);
+        
+        const grad = galaxyCtx.createRadialGradient(
+          galaxyCanvas.width * 0.5, galaxyCanvas.height * 0.5, 50,
+          galaxyCanvas.width * 0.5, galaxyCanvas.height * 0.5, galaxyCanvas.width * 0.8
+        );
+        grad.addColorStop(0, '#550033');
+        grad.addColorStop(0.3, '#2a0018');
+        grad.addColorStop(0.7, '#12000a');
+        grad.addColorStop(1, '#030001');
+        galaxyCtx.fillStyle = grad;
+        galaxyCtx.fillRect(0, 0, galaxyCanvas.width, galaxyCanvas.height);
+
+        galaxyCtx.shadowBlur = 12;
+        galaxyCtx.shadowColor = 'rgba(255,120,180,0.7)';
+        const time = Date.now() * 0.002;
+        for (let p of galaxyParticles) {
+          p.x += p.speedX + Math.sin(time + p.phase) * 0.1;
+          p.y += p.speedY + Math.cos(time + p.phase * 2) * 0.05;
+          if (p.x > galaxyCanvas.width + 20) p.x = -20;
+          if (p.x < -20) p.x = galaxyCanvas.width + 20;
+          if (p.y > galaxyCanvas.height + 20) p.y = -20;
+          if (p.y < -20) p.y = galaxyCanvas.height + 20;
+
+          const twinkle = 0.8 + 0.4 * Math.sin(time * 3 + p.phase);
+          let opacity = p.baseOpacity * twinkle;
+          if (galaxyBright) opacity *= 1.3;
+
+          const symbol = p.type === 'heart' ? '❤️' : '✨';
+          galaxyCtx.font = `${p.size}px "Segoe UI", "Apple Color Emoji", "Arial", sans-serif`;
+          galaxyCtx.fillStyle = p.color;
+          galaxyCtx.globalAlpha = Math.min(opacity, 1);
+          galaxyCtx.fillText(symbol, p.x, p.y);
+        }
+        galaxyCtx.shadowBlur = 0;
+
+        galaxyAnimation = requestAnimationFrame(drawGalaxy);
+      }
+
+      function startGalaxy() {
+        galaxyActive = true;
+        initGalaxy();
+        drawGalaxy();
+      }
+
+      function stopGalaxy() {
+        galaxyActive = false;
+        if (galaxyAnimation) cancelAnimationFrame(galaxyAnimation);
+      }
+
+      // Evento encender lámparas (BOTÓN VISIBLE) + INICIAR MÚSICA
+      switchBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchBtn.classList.add('disabled');
+        switchBtn.textContent = '✨ ON ✨';
+        lampLeft.classList.add('lit');
+        lampRight.classList.add('lit');
+        galaxyBright = true;
+        galaxyCanvas.classList.add('bright');
+        valentineTitle.classList.add('show');
+
+        // Iniciar música
+        startMusic();
+
+        setTimeout(() => {
+          stopGalaxy();
+          introContainer.classList.add('hidden');
+          dateAccessContainer.classList.remove('hidden');
+        }, 5000);
+      });
+
+      // --- Calculadora de fecha (16/08/2025) ---
+      function buildKeyboard() {
+        const keys = [
+          '1', '2', '3',
+          '4', '5', '6',
+          '7', '8', '9',
+          'C', '0', '←'
+        ];
+        keyboardDiv.innerHTML = '';
+        keys.forEach(k => {
+          const keyDiv = document.createElement('div');
+          keyDiv.className = 'key' + (k === 'C' ? ' clear' : '') + (k === '←' ? ' clear' : '');
+          keyDiv.textContent = k;
+          keyDiv.addEventListener('click', () => handleKey(k));
+          keyboardDiv.appendChild(keyDiv);
+        });
+        const enterDiv = document.createElement('div');
+        enterDiv.className = 'key enter';
+        enterDiv.textContent = '✓';
+        enterDiv.addEventListener('click', checkDate);
+        keyboardDiv.appendChild(enterDiv);
+      }
+
+      function handleKey(key) {
+        if (key === 'C') {
+          dayStr = monthStr = yearStr = '';
+          currentField = 'day';
+          updateDisplay();
+          loveMessageAccess.textContent = '';
+          dateError.textContent = '';
+          return;
+        }
+        if (key === '←') {
+          if (currentField === 'day' && dayStr.length > 0) {
+            dayStr = dayStr.slice(0, -1);
+          } else if (currentField === 'month' && monthStr.length > 0) {
+            monthStr = monthStr.slice(0, -1);
+          } else if (currentField === 'year' && yearStr.length > 0) {
+            yearStr = yearStr.slice(0, -1);
+          }
+          updateDisplay();
+          return;
+        }
+        if (!/^\d$/.test(key)) return;
+        
+        if (currentField === 'day') {
+          if (dayStr.length < 2) dayStr += key;
+          if (dayStr.length === 2) currentField = 'month';
+        } else if (currentField === 'month') {
+          if (monthStr.length < 2) monthStr += key;
+          if (monthStr.length === 2) currentField = 'year';
+        } else if (currentField === 'year') {
+          if (yearStr.length < 4) yearStr += key;
+        }
+        updateDisplay();
+      }
+
+      function updateDisplay() {
+        displayDay.textContent = dayStr.padStart(2, '_').slice(0,2);
+        displayMonth.textContent = monthStr.padStart(2, '_').slice(0,2);
+        displayYear.textContent = yearStr.padStart(4, '_').slice(0,4);
+      }
+
+      function checkDate() {
+        const day = parseInt(dayStr, 10);
+        const month = parseInt(monthStr, 10);
+        const year = parseInt(yearStr, 10);
+
+        if (dayStr.length !== 2 || monthStr.length !== 2 || yearStr.length !== 4) {
+          dateError.textContent = '❌ fecha incompleta';
+          return;
+        }
+
+        if (day === SPECIAL_DAY && month === SPECIAL_MONTH && year === SPECIAL_YEAR) {
+          loveMessageAccess.innerHTML = '❤️ te amo ❤️';
+          dateError.textContent = '';
+          dateAccessContainer.classList.add('hidden');
+          initHeartCanvas();
+          setTimeout(() => envelope.classList.add('visible'), 2000);
+        } else {
+          dateError.textContent = '❌ fecha incorrecta';
+          loveMessageAccess.innerHTML = '';
+        }
+      }
+
+      buildKeyboard();
+
+      // --- Carrusel ---
+      const carouselTrack = document.getElementById('carouselTrack');
+      const carouselDots = document.getElementById('carouselDots');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      const slidesData = [
+        { img: "./img/descarga.jpg", caption: "dormir juntos 😴" },
+        { img: "./img/cocinar.jpg", caption: "cocinar juntos 🍳" },
+        { img: "./img/123.jpg", caption: "ver películas juntos 🎬" },
+        { img: "./img/vestir.jpg", caption: "vestirnos igual 👫" },
+        { img: "./img/images.jpg", caption: "ver atardecer juntos 🌅" },
+        { img: "./img/mas.jpg", caption: "y mucho más...!!!" }
+      ];
+
+      let currentIndex = 0;
+
+      function buildCarousel() {
+        carouselTrack.innerHTML = '';
+        slidesData.forEach((slide, index) => {
+          const slideDiv = document.createElement('div');
+          slideDiv.className = 'carousel-slide';
+          slideDiv.innerHTML = `<img src="${slide.img}" alt="${slide.caption}" loading="lazy"><span class="slide-caption">${slide.caption}</span>`;
+          carouselTrack.appendChild(slideDiv);
+        });
+
+        carouselDots.innerHTML = '';
+        slidesData.forEach((_, i) => {
+          const dot = document.createElement('span');
+          dot.className = 'dot';
+          dot.addEventListener('click', () => goToSlide(i));
+          carouselDots.appendChild(dot);
+        });
+
+        updateDots();
+        checkLastSlide();
+      }
+
+      function goToSlide(index) {
+        const slideWidth = carouselTrack.children[0]?.offsetWidth || 140;
+        const gap = 8;
+        const scrollAmount = index * (slideWidth + gap);
+        carouselTrack.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+        currentIndex = index;
+        updateDots();
+        checkLastSlide();
+      }
+
+      function updateDots() {
+        const dots = document.querySelectorAll('.dot');
+        dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
+      }
+
+      function checkLastSlide() {
+        if (currentIndex === slidesData.length - 1) {
+          leerMasBtn.classList.remove('hidden');
+        } else {
+          leerMasBtn.classList.add('hidden');
+        }
+      }
+
+      prevBtn.addEventListener('click', () => { if (currentIndex > 0) goToSlide(currentIndex - 1); });
+      nextBtn.addEventListener('click', () => { if (currentIndex < slidesData.length - 1) goToSlide(currentIndex + 1); });
+
+      carouselTrack.addEventListener('scroll', () => {
+        const slideWidth = carouselTrack.children[0]?.offsetWidth || 140;
+        const gap = 8;
+        const scrollLeft = carouselTrack.scrollLeft;
+        const index = Math.round(scrollLeft / (slideWidth + gap));
+        if (index !== currentIndex && index >= 0 && index < slidesData.length) {
+          currentIndex = index;
+          updateDots();
+          checkLastSlide();
+        }
+      });
+
+      buildCarousel();
+
+      // --- Abrir carta ---
+      function openCard(e) {
+        e.stopPropagation();
+        if (isOpened || !envelope.classList.contains('visible')) return;
+        isOpened = true;
+        card.classList.add('shine');
+        setTimeout(() => card.classList.remove('shine'), 1000);
+        card.classList.add('flipped');
+        goToSlide(0);
+        step1.style.display = 'flex';
+        step2.style.display = 'none';
+        cerrarCartaBtn.classList.remove('visible');
+      }
+      card.addEventListener('click', openCard);
+
+      // --- Leer más ---
+      function goToStep2(e) {
+        e.stopPropagation();
+        step1.style.display = 'none';
+        step2.style.display = 'flex';
+        messageScroll.scrollTop = 0;
+        cerrarCartaBtn.classList.remove('visible');
+      }
+      leerMasBtn.addEventListener('click', goToStep2);
+
+      // --- Scroll para botón cerrar ---
+      function checkScrollEnd() {
+        if (step2.style.display === 'flex') {
+          const scrollTop = messageScroll.scrollTop;
+          const scrollHeight = messageScroll.scrollHeight;
+          const clientHeight = messageScroll.clientHeight;
+          if (scrollTop + clientHeight >= scrollHeight - 10) {
+            cerrarCartaBtn.classList.add('visible');
+          } else {
+            cerrarCartaBtn.classList.remove('visible');
+          }
+        }
+      }
+      messageScroll.addEventListener('scroll', checkScrollEnd);
+
+      // --- Confeti de palabras ---
+      const confettiCtx = confettiCanvas.getContext('2d');
+      let particles = [];
+      let confettiActive = false;
+      let confettiFrame;
+
+      function initConfettiCanvas() {
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+      }
+
+      function createRainParticles() {
+        const words = ['te quiero', 'te amo', 'te extraño', 'mi vida', 'corazón', 'siempre', 'besos', 'amor'];
+        const count = 70;
+        particles = [];
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x: Math.random() * confettiCanvas.width,
+            y: Math.random() * -250,
+            word: words[Math.floor(Math.random() * words.length)],
+            speedY: Math.random() * 1.2 + 0.6,
+            speedX: (Math.random() - 0.5) * 0.3,
+            size: Math.floor(Math.random() * 24) + 18,
+            opacity: 0.9,
+            color: `hsl(${Math.floor(Math.random() * 30 + 330)}, 80%, 70%)`,
+            rotation: (Math.random() - 0.5) * 0.08
+          });
+        }
+      }
+
+      function drawRain() {
+        if (!confettiActive) return;
+        confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        confettiCtx.shadowBlur = 10;
+        confettiCtx.shadowColor = 'rgba(255,100,150,0.6)';
+        
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.y += p.speedY;
+          p.x += p.speedX;
+          p.opacity -= 0.001;
+
+          if (p.y > confettiCanvas.height + 70 || p.x < -70 || p.x > confettiCanvas.width + 70 || p.opacity <= 0) {
+            particles.splice(i, 1);
+          } else {
+            confettiCtx.save();
+            confettiCtx.translate(p.x, p.y);
+            confettiCtx.rotate(p.rotation);
+            confettiCtx.font = `${p.size}px "Dancing Script", "Segoe UI Emoji", "Arial", cursive`;
+            confettiCtx.fillStyle = p.color;
+            confettiCtx.globalAlpha = p.opacity;
+            confettiCtx.fillText(p.word, 0, 0);
+            confettiCtx.restore();
+          }
+        }
+
+        if (particles.length > 0) {
+          confettiFrame = requestAnimationFrame(drawRain);
+        } else {
+          confettiActive = false;
+          confettiCanvas.style.display = 'none';
+        }
+      }
+
+      function startRainConfetti() {
+        if (confettiActive) cancelAnimationFrame(confettiFrame);
+        initConfettiCanvas();
+        createRainParticles();
+        confettiActive = true;
+        confettiCanvas.style.display = 'block';
+        drawRain();
+        setTimeout(() => {
+          confettiActive = false;
+          confettiCanvas.style.display = 'none';
+          cancelAnimationFrame(confettiFrame);
+        }, 10000);
+      }
+
+      // --- Cerrar carta con lluvia de palabras ---
+      function closeCardWithRain(e) {
+        e.stopPropagation();
+        if (!isOpened) return;
+        startRainConfetti();
+        isOpened = false;
+        card.classList.remove('flipped');
+        step1.style.display = 'flex';
+        step2.style.display = 'none';
+        leerMasBtn.classList.add('hidden');
+        currentIndex = 0;
+        goToSlide(0);
+        cerrarCartaBtn.classList.remove('visible');
+      }
+      cerrarCartaBtn.addEventListener('click', closeCardWithRain);
+
+      // --- Resize ---
+      window.addEventListener('resize', function() {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        heartCanvas.width = w;
+        heartCanvas.height = h;
+        if (confettiActive) initConfettiCanvas();
+        if (galaxyActive) {
+          initGalaxy();
+        }
+      });
+
+      // Inicial: arrancar galaxia
+      startGalaxy();
+    })();
+  </script>
+</body>
+</html>
